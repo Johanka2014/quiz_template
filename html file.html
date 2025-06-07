@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FT News Briefing Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">📰 FT News Briefing Quiz</h1>
+            <p class="subtitle">Test your C1 English comprehension skills</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="score" id="scoreDisplay">Score: 0/4</div>
+
+        <div id="gameArea">
+            <div class="question-container">
+                <div class="question" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <div class="explanation" id="explanationBox">
+                <h3>Explanation</h3>
+                <p id="explanationText"></p>
+                <div class="citation" id="citationText"></div>
+            </div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+        </div>
+
+        <div class="final-score" id="finalScore">
+            <h2>🌍 Quiz Complete!</h2>
+            <p id="finalScoreText"></p>
+            <button class="restart-btn" onclick="restartQuiz()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which of the following statements most accurately describes the main obstacle to Wells Fargo's growth over the past several years?",
+                options: [
+                    "A general downturn in the US banking market.", 
+                    "An inability to compete with the investment banking divisions of its rivals.", 
+                    "A regulatory penalty that limited the size of its assets.", 
+                    "Difficulties in implementing new financial technologies."
+                    ],
+                correct: 2,
+                explanation: "The text explicitly states that the Federal Reserve imposed an 'asset cap' on the bank, which was the 'main punishment' and 'really has held back Wells Fargo over the past decade in terms of its ability to grow and to expand.'",
+                citation: "So the Federal Reserve imposed this asset cap on Wells Fargo, restricting it from growing beyond the $2tn in assets that it had in 2017... And so this was the main punishment and it really has held back Wells Fargo..."
+            },
+            {
+                question: "What is the primary reason for the delay in the rollout of Apple Intelligence in China?",
+                options: [
+                    "A partnership disagreement with Alibaba.",
+                    "Technical issues with Alibaba's latest models.",
+                    "US President Donald Trump's direct intervention.",
+                    "A failure to get approval from a Chinese regulator."
+                    ],
+                correct: 3,
+                explanation: "While the situation is part of the broader US-China trade war, the direct cause of the delay mentioned in the text is a regulatory one.",
+                citation: "But even with this in, sources say Apple is having a hard time getting Apple Intelligence past the Cyberspace Administration of China."
+            },
+            {
+                question: "The phrase 'tantamount to surrender' used by Ukrainian President Volodymyr Zelenskyy implies that Russia's peace terms were...",
+                options: [
+                    "Unreasonable and would mean giving up Ukraine's sovereignty.",
+                    "A fair starting point for negotiations.",
+                    "Too complex to be implemented quickly.",
+                    "Vague and open to misinterpretation."
+                    ],
+                correct: 0,
+                explanation: "The word 'tantamount' means 'equivalent in seriousness to.' By using this phrase, President Zelenskyy was stating that accepting the terms would be the same as surrendering completely.",
+                citation: "Earlier on Wednesday, Ukrainian President Volodymyr Zelenskyy refused Russia’s terms for peace, which he said would basically amount to Ukraine surrendering."
+            },
+            {
+                question: "True or False: Bulgaria's path to joining the Eurozone was straightforward and without any significant opposition.",
+                options: ["True", "False"],
+                correct: 1,
+                explanation: "The text highlights two significant issues: a delay because the country 'did not fulfil the inflation criteria' and internal opposition, including protests 'led by pro-Russian, far-right populist forces.'",
+                citation: "But unfortunately, they did not fulfil the inflation criteria... In Bulgaria, there was a number of protests... most recently, over the weekend there was a rally which saw several thousands protest against joining the single currency, mostly led by pro-Russian, far-right populist forces."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // Update progress
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Hide explanation and next button
+            document.getElementById('explanationBox').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+            
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(answerIndex) {
+            if (selectedAnswer !== null) return; // Prevent multiple selections
+            
+            selectedAnswer = answerIndex;
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            // Disable all options
+            options.forEach(option => option.classList.add('disabled'));
+            
+            // Mark correct and incorrect answers
+            options[question.correct].classList.add('correct');
+            if (answerIndex !== question.correct) {
+                options[answerIndex].classList.add('incorrect');
+            }
+            
+            // Update score
+            if (answerIndex === question.correct) {
+                score++;
+            }
+            
+            // Show explanation
+            document.getElementById('explanationText').textContent = question.explanation;
+            document.getElementById('citationText').textContent = `Source: "${question.citation}"`;
+            document.getElementById('explanationBox').classList.add('show');
+            document.getElementById('nextBtn').classList.add('show');
+            
+            // Update score display
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}/${questions.length}`;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function showFinalScore() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('finalScore').classList.add('show');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            let message = '';
+            
+            if (percentage === 100) {
+                message = `Outstanding! You scored ${score}/${questions.length} (${percentage}%). You have an excellent understanding of the material!`;
+            } else if (percentage >= 75) {
+                message = `Great job! You scored ${score}/${questions.length} (${percentage}%). You have a solid grasp of the key details.`;
+            } else if (percentage >= 50) {
+                message = `Good effort! You scored ${score}/${questions.length} (${percentage}%). A quick review might help solidify the details.`;
+            } else {
+                message = `You scored ${score}/${questions.length} (${percentage}%). Don't worry, the topics are complex. Try the quiz again to reinforce your learning!`;
+            }
+            
+            document.getElementById('finalScoreText').textContent = message;
+            
+            // Update progress to 100%
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('finalScore').classList.remove('show');
+            document.getElementById('scoreDisplay').textContent = `Score: 0/${questions.length}`;
+            
+            loadQuestion();
+        }
+
+        // Initialize the game
+        loadQuestion();
+    </script>
+</body>
+</html>
