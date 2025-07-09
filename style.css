@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Changed to a light green gradient */
+    /* Changed to a light blue gradient */
     background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
     min-height: 100vh;
     display: flex;
