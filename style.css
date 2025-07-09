@@ -34,8 +34,8 @@ body {
     left: 0;
     right: 0;
     height: 5px;
-    /* Changed to a green multi-color gradient */
-    background: linear-gradient(90deg, #81c784, #4caf50, #388e3c, #a5d6a7);
+    /* Changed to a blue multi-color gradient */
+   background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
     border-radius: 20px 20px 0 0;
 }
 
